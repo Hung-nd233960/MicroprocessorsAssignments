@@ -4,9 +4,7 @@
 
 ### a. We can try compute the value $S$ at  $N = 9$ by
 
-$
-S = 1^3 + 2^3 + 3^3 + \dots + N^3 = (1+2+3+ \dots + N)^2 = \left(\frac{N(N+1)}{2}\right)^2
-$
+$S = 1^3 + 2^3 + 3^3 + \dots + N^3 = (1+2+3+ \dots + N)^2 = \left(\frac{N(N+1)}{2}\right)^2$
 At $N = 9, S = 2025$
 
 We can conclude that N requires 1 byte and S requires two bytes since maximum value of N is 8 and S is 2025.
