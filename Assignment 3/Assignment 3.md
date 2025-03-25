@@ -184,14 +184,15 @@ Running code screen:
 
 a. Diagram:
 
-```mermaid
+```
 flowchart TD
     A[Start] --> B[Save string to stack]
     B --> C[Skip first two bytes (size, count)]
     C --> D[Take byte, subtract 48]
     D --> E[Add to AL/AX]
-    E --> F[Repeat until end of string]
-    F --> G[Return result in AX]
+    E --> F{Is end of string?}
+    F -- No --> C
+    F -- Yes --> G[Return result in AX]
     G --> H[End]
 ```
 
