@@ -199,26 +199,101 @@ flowchart TD
 b. Assembly code:
 
 ```assembly
+; 8086 Assembly code to calculate the sum of digits in a character array (string)
+; The string is passed through the stack, and the result is returned in AX.
 
+.MODEL SMALL
+.STACK 100H
+.DATA
+    PROMPT DB "Enter a string of digits: $"
+    RESULT_MSG DB "Sum of digits is: $"
+    INPUT_BUFFER DB 20, ?, 20 DUP('$')
+.CODE
 
-PRINT_NUM PROC              ; Subroutine to print a number in decimal format
-    MOV BX, 10              ; Divisor for decimal system
-    XOR CX, CX              ; Clear CX to count digits
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
 
-NEXT_DIGIT:
-    XOR DX, DX              ; Clear DX for accurate division
-    DIV BX                  ; Divide AX by 10, quotient in AX, remainder in DX
-    PUSH DX                 ; Push remainder (last digit) onto stack
-    INC CX                  ; Increment digit counter
-    CMP AX, 0               ; Check if quotient is zero
-    JNE NEXT_DIGIT          ; Repeat until all digits are processed
+    ; Display prompt message
+    LEA DX, PROMPT
+    MOV AH, 09H
+    INT 21H
+
+    ; Read string from user
+    MOV AH, 0AH
+    LEA DX, INPUT_BUFFER
+    INT 21H
+
+    ; Push address of the input string onto the stack
+    LEA SI, INPUT_BUFFER + 2  ; Skip the first 2 bytes (size and count)
+    PUSH SI
+    CALL SUM_OF_DIGITS
+
+    ; Display result message
+    LEA DX, RESULT_MSG
+    MOV AH, 09H
+    INT 21H
+
+    ; Print the result
+    CALL PRINT_NUM
+
+    ; End program
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+
+; Subroutine to calculate the sum of digits
+SUM_OF_DIGITS PROC
+    PUSH BP
+    MOV BP, SP
+
+    MOV SI, [BP + 4]    ; Get the address of the input string from the stack
+    XOR AX, AX          ; Initialize sum to 0
+
+SUM_LOOP:
+    MOV BL, [SI]        ; Read the character
+    CMP BL, 0           ; Check for string terminator (null)
+    JE SUM_END          ; If null, end the loop
+
+    CMP BL, '0'         ; Validate if it's a digit
+    JB NOT_A_DIGIT
+    CMP BL, '9'
+    JA NOT_A_DIGIT
+
+    SUB BL, '0'         ; Convert ASCII to integer
+    ADD AX, BX          ; Add to sum
+
+NOT_A_DIGIT:
+    INC SI              ; Move to the next character
+    JMP SUM_LOOP
+
+SUM_END:
+    POP BP
+    RET
+SUM_OF_DIGITS ENDP
+
+; Subroutine to print the result (AX)
+PRINT_NUM PROC
+    MOV BX, 10          ; Divisor for decimal conversion
+    XOR CX, CX          ; Clear digit counter
+
+CONVERT_LOOP:
+    XOR DX, DX
+    DIV BX              ; AX = AX / 10, remainder in DX
+    PUSH DX             ; Save remainder (digit)
+    INC CX              ; Increment digit count
+    CMP AX, 0
+    JNE CONVERT_LOOP
 
 PRINT_LOOP:
-    POP DX                  ; Pop last digit from the stack
-    ADD DL, '0'             ; Convert to ASCII by adding '0'
-    MOV AH, 02H             ; Display character function
+    POP DX
+    ADD DL, '0'         ; Convert to ASCII
+    MOV AH, 02H         ; Print character function
     INT 21H
-    LOOP PRINT_LOOP         ; Repeat for all digits
+    LOOP PRINT_LOOP
     RET
 PRINT_NUM ENDP
+
+END MAIN
+
 ```
