@@ -1,4 +1,8 @@
-# Microprocessor Midterm
+# Microprocessor Midterm 
+
+Nguyen Duc Hung - 20233960 - 157326
+All code and executables are in the Code folder.
+Diagrams are in the Diagrams folder.
 
 ## Question 1
 
@@ -486,3 +490,10 @@ The IP register holds the offset of the currently executing instruction relative
 
     END START
 ```
+Images of code running:
+
+Benchmarking C code:
+![alt text](image.png)
+
+Running Assembly code:
+![alt text](image-1.png)
